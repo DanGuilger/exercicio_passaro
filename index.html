@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <title>Exercício do Pássaro</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            background-color:purple;
+            align-items: center;
+            height: 100vh;
+            margin: 0;  }
+    </style>
+</head>
+<body>
+
+    <script>
+
+        //Configurações do jogo
+        var config = {
+            type: Phaser.AUTO, //Phaser seleciona automaticamente WebGL ou Canvas
+            width: 1600, //Largura da tela do jogo
+            height: 900, //Altura da tela do jogo
+    
+            scene: {
+                preload: preload, //Pré carrega todos os assets
+                create: create, //Cria os elementos no jogo
+                update: update //Atualiza a lógica a cada frame
+            }
+        };
+    
+        var game = new Phaser.Game(config); //Cria o jogo com a configuração definida
+
+        var passarinho; //Variável global para armazenar o sprite do passarinho
+    
+        function preload() { //Carrega as imagens
+            this.load.image('bg', 'assets/bg_space.png'); //Plano de fundo do professor
+            this.load.image('bg-pig', 'assets/bg-pig.jpg'); //plano de fundo do porco
+            this.load.spritesheet('bird', 'assets/bird-purple.png', { frameWidth: 75, frameHight: 75 }); //Passarinho roxo
+        }
+    
+        function create() { //Cria os elementos no jogp
+            this.add.image(800, 450, 'bg-pig').setScale(1.2); //Adiciona o fundo do porco e define sua escala
+            passarinho = this.add.sprite(70, 40, 'bird').setScale(2); //Adiciona o passaro roxo e sua escala
+
+            this.anims.create({ //Cria a animação do passaro voando
+                key: 'fly', //Nome da animação
+                frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 7 }), //Define os frames da sprite
+                frameRate: 10, //Velocidade da animação
+                repeat: -1 //Repetição infinita da animação
+            })
+
+            passarinho.anims.play('fly', true); //Inicia a animação do passaro
+
+        }
+    
+        function update() { //Atualiza os movimentos a cada frame
+
+            if (passarinho.x === 70) { //Caso o passarinho esteja na esquerda da tela
+                passarinho.setFlip(false, false); //Mantem a direção da sprite
+                passarinho.ida = true; //Define que o passaro está indo para a direita
+
+                while (passarinho.ida) { //Manda uma mensagem, quando o passaro está voando para a direita
+                    console.log("Já é época de migração?");
+                    break; //Sai do loop após rodar uma vez
+                }
+            }
+            if (passarinho.x < 1530 && passarinho.ida === true) { //Enquanto o passaro não chega a direita da tela
+                setTimeout(() => console.log('Direita'), 10000); //Avisa a direção em que está indo
+                passarinho.x += 5; //Continua a direita
+            }
+            if (passarinho.x === 1530) { //Quando o passarinho chega a borda direita
+                passarinho.setFlip(true, false); //Faz o passaro olhar para a esquerda
+                passarinho.ida = false; //Faz o passaro andar para a esquerda
+            }
+            if (passarinho.x > 70 && passarinho.ida === false) { //Enquanto não chegar a borda esquerda
+                setTimeout(() => console.log('Esquerda'), 10000); //Avisa a direção em que está indo
+                passarinho.x -= 5; //Continua indo para a esquerda
+            }
+            if (passarinho.y === 40) { //Se o passarinho estiver na borda superior
+                passarinho.iday = true; //Mova o passaro para baixo
+            }
+            if (passarinho.y < 860 && passarinho.iday === true) { //Enquanto não chegar a borda de baixo
+                setTimeout(() => console.log('Baixo'), 10000); //Avisa a direção em que está indo
+                passarinho.y += 5; //Continue indo para baixo
+            }
+            if (passarinho.y === 860) { //Quando chegar a borda de baixo
+                passarinho.iday = false; //Faz ele mudar de direção para cima
+            }
+            if (passarinho.y > 40 && passarinho.iday === false){ //Enquanto não atingir a borda de cima
+                setTimeout(() => console.log('Cima'), 10000); //Avisa a direção em que está indo
+            passarinho.y -= 5; //Continua indo para cima
+            }
+        }
+        
+    
+    </script>
+
+</body>
+</html>
